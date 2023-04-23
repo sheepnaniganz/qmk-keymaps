@@ -1,6 +1,10 @@
+# The username you want to use
 USER = sheepnaniganz
 
+# Add any keyboard you would use to keyboards and create a folder with the same name containing keymap files
 KEYBOARDS = d65 ergo
+
+# Add path variables with keyboard ending and with the default keyboard map as the value
 PATH_d65 = kbdfans/kbd67/mkiirgb/v2
 PATH_ergo = ergodox_ez
 
@@ -9,32 +13,32 @@ all: $(KEYBOARDS)
 .PHONY: $(KEYBOARDS)
 $(KEYBOARDS):
 	# init submodule
-	git submodule update --init --recursive
+	git submodule update --init --remote --recursive
+	git submodule foreach git pull
+	git submodule foreach make git-submodule
 
 	# cleanup old symlinks
-	for f in $(KEYBOARDS); do rm -rf vial-qmk/keyboards/$(PATH_$@)/keymaps/vial; rm -rf vial-qmk/keyboards/$(PATH_$@)/info.json; done
+	rm -rf vial-qmk/keyboards/$(PATH_$@)/keymaps/$(USER)
 	rm -rf vial-qmk/users/$(USER)
 
-	# add new symlinks
+	# add new symlinks and files
 	ln -s $(shell pwd)/user vial-qmk/users/$(USER)
-	ln -s $(shell pwd)/$@/keymap vial-qmk/keyboards/$(PATH_$@)/keymaps/vial
-	ln -s $(shell pwd)/$@/info.json vial-qmk/keyboards/$(PATH_$@)/info.json
+	ln -s $(shell pwd)/$@/keymap vial-qmk/keyboards/$(PATH_$@)/keymaps/$(USER)
+	cp vial-qmk/keyboards/$(PATH_$@)/info.json $(shell pwd)/$@/info.json.bak
+	rm vial-qmk/keyboards/$(PATH_$@)/info.json
+	cp $(shell pwd)/$@/info.json vial-qmk/keyboards/$(PATH_$@)/
 
 	# run lint check
-	cd vial-qmk; qmk lint -km vial -kb $(PATH_$@) --strict
+	cd vial-qmk; qmk lint -km $(USER) -kb $(PATH_$@) --strict
 
 	# run build
-	make BUILD_DIR=$(shell pwd) -j1 -C vial-qmk $(PATH_$@):vial
+	make BUILD_DIR=$(shell pwd)/build -j1 -C vial-qmk $(PATH_$@):$(USER)
 
 	# cleanup symlinks
-	for f in $(KEYBOARDS); do rm -rf vial-qmk/keyboards/$(PATH_$@)/keymaps/vial; rm -rf vial-qmk/keyboards/$(PATH_$@)/info.json; done
 	rm -rf vial-qmk/users/$(USER)
-
-	# reset git submodule
-	cd vial-qmk; git reset --hard
+	rm -rf vial-qmk/keyboards/$(PATH_$@)/keymaps/$(USER)
+	rm vial-qmk/keyboards/$(PATH_$@)/info.json
+	mv $(shell pwd)/$@/info.json.bak vial-qmk/keyboards/$(PATH_$@)/info.json
 
 clean:
-	rm -rf obj_*
-	rm -f *.elf
-	rm -f *.map
-	rm -f *.hex
+	rm -rf ./build/
