@@ -30,6 +30,9 @@ $(KEYBOARDS):
 	for f in $(KEYBOARDS); do rm -rf vial-qmk/keyboards/$(PATH_$@)/keymaps/vial; rm -rf vial-qmk/keyboards/$(PATH_$@)/info.json; done
 	rm -rf vial-qmk/users/$(USER)
 
+	# reset git submodule
+	cd vial-qmk; git reset --hard
+
 clean:
 	rm -rf obj_*
 	rm -f *.elf
