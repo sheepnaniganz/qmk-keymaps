@@ -1,4 +1,4 @@
-# Customized Vial Support for KBDfans D65 using KBD67mkiirgb v2
+# Customized VIAL Support for KBDfans D65 using KBD67mkiirgb v2
 
 This is a custom build for the D65 using the KBD67mkiirgb v2 board. This alters some of the features on the default VIAL build by removing the default keymap folder and symlinking the D65 folder to keep the firmware under max. Currently this build contains 4 layers and uses 26814/28672 (93%, 1858 bytes free) of the max firmware size. The default build was too large to use.
 
