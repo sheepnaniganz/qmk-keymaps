@@ -32,12 +32,12 @@ This can easily be editted to be used for multiple keyboards by changing the mak
 
 Run the following command to build the firmware.
 
-```sh
+```Bash
 make d65
 ```
 
 To cleanup previous builds run
 
-```sh
+```Bash
 make clean
 ```
